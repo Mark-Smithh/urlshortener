@@ -123,6 +123,8 @@ func openURL(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if !foundInCache {
+		w.WriteHeader(400)
+		w.Header().Set("Content-Type", "application/json")
 		n := notFoundInCache{
 			Msg: "url not found in cache:  it must be submitted for shortening before it can be opened",
 		}
