@@ -13,7 +13,6 @@ import (
 )
 
 var body *strings.Reader
-
 var writer *httptest.ResponseRecorder
 var request *http.Request
 var withURLParam = "http://localhost:5555/hash?url=https://www.t-mobile.com/cell-phones"

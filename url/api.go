@@ -118,9 +118,6 @@ func openURL(w http.ResponseWriter, req *http.Request) {
 	}
 
 	val, foundInCache := c.Get(localURL[0]) //look for localURL in cache
-	if foundInCache {
-		fmt.Println("found in cache")
-	}
 
 	if !foundInCache {
 		w.WriteHeader(400)
@@ -133,6 +130,7 @@ func openURL(w http.ResponseWriter, req *http.Request) {
 		enc.Encode(n)
 		return
 	}
+	w.WriteHeader(302) //302 redirect
 	urlToOpen := val.(string)
 	exec.Command("open", urlToOpen).Start() //open web url in browser
 }
