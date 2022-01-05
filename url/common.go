@@ -13,14 +13,13 @@ var c *cache.Cache
 var port = ":5555"
 
 //Init initialize needed objects
-func Init() {
+func Init() error {
 	found, err := checkSalt()
 	if !found && err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
+		return err
 	}
-
 	c = cache.New(10*time.Minute, 10*time.Minute)
+	return nil
 }
 
 //Hash512256 hash using SHA512/256

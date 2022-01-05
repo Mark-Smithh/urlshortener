@@ -40,7 +40,6 @@ func StartAPI() {
 }
 
 func hashHTTP(w http.ResponseWriter, req *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(w)
 	enc.SetEscapeHTML(false)
 
@@ -51,23 +50,30 @@ func hashHTTP(w http.ResponseWriter, req *http.Request) {
 
 	urlParsed, err := url.Parse(val[0])
 	if err != nil {
+		w.WriteHeader(400)
+		w.Header().Set("Content-Type", "application/json")
 		e := parseURLError{Msg: err.Error()}
 		enc.Encode(e)
 		return
 	}
 
 	if len(urlParsed.Hostname()) == 0 {
+		w.WriteHeader(400)
+		w.Header().Set("Content-Type", "application/json")
 		e := parseURLError{Msg: "unable to determine hostname:  the full url must be passed:  exmaple http://www.google.com"}
 		enc.Encode(e)
 		return
 	}
 
 	if urlParsed.RequestURI() == "/" {
+		w.WriteHeader(400)
+		w.Header().Set("Content-Type", "application/json")
 		e := parseURLError{Msg: "unable to determine request URI:  the full url must be passed:  exmaple http://www.google.com/email"}
 		enc.Encode(e)
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	uri := urlParsed.RequestURI()
 	uriTrim := uri[1:] //remove leading slash
 	hashInput := Input{URL: uriTrim}
@@ -89,6 +95,8 @@ func paramCheck(w http.ResponseWriter, req *http.Request, param string) ([]strin
 		m := missingParam{
 			Msg: "Missing parameter:  " + param + " must be passed in querystring:  example localhost:5555/hash?url=http:www.googe.com",
 		}
+		w.WriteHeader(400)
+		w.Header().Set("Content-Type", "application/json")
 		enc := json.NewEncoder(w)
 		enc.SetEscapeHTML(false)
 		enc.Encode(m)
